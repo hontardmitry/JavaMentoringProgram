@@ -3,15 +3,20 @@ package com.epam.jmp.dmytro_hontar.dto;
 import java.time.LocalDate;
 
 public class Subscription {
-    private String bankcard;
+    private String bankCard;
     private LocalDate startDate;
 
-    public String getBankcard() {
-        return bankcard;
+    public Subscription(String bankCard, LocalDate startDate) {
+        this.bankCard = bankCard;
+        this.startDate = startDate;
     }
 
-    public void setBankcard(String bankcard) {
-        this.bankcard = bankcard;
+    public String getBankCard() {
+        return bankCard;
+    }
+
+    public void setBankCard(String bankCard) {
+        this.bankCard = bankCard;
     }
 
     public LocalDate getStartDate() {
