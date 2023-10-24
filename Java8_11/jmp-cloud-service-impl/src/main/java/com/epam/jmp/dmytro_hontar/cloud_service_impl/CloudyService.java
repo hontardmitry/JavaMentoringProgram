@@ -1,5 +1,6 @@
 package com.epam.jmp.dmytro_hontar.cloud_service_impl;
 
+import com.epam.jmp.dmytro_hontar.cloud_service_impl.exceptions.InvalidCardNumberException;
 import com.epam.jmp.dmytro_hontar.dto.Subscription;
 import com.epam.jmp.dmytro_hontar.dto.User;
 import com.epam.jmp.dmytro_hontar.dto.bankcard.BankCard;
@@ -20,10 +21,11 @@ public class CloudyService implements Service {
     }
 
     @Override
-    public Optional<Subscription> getSubscriptionByBankCardNumber(String cardNumber) {
+    public Subscription getSubscriptionByBankCardNumber(String cardNumber) {
         return subscriptions.stream()
                 .filter(subscription -> cardNumber.equals(subscription.getBankCard()))
-                .findFirst();
+                .findFirst()
+                .orElseThrow(InvalidCardNumberException::new);
     }
 
     @Override
