@@ -7,15 +7,12 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>jmp.cloud.bank.impl</artifactId>
+    <artifactId>jmp-cloud-bank-impl</artifactId>
     <packaging>jar</packaging>
 
     <name>jmp-cloud-bank-impl</name>
     <url>http://maven.apache.org</url>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
     <dependencies>
         <dependency>
             <groupId>com.epam.jmp.dmytro_hontar</groupId>
