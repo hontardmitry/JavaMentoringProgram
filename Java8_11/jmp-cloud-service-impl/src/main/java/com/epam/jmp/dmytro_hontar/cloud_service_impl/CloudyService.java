@@ -8,13 +8,18 @@ import com.epam.jmp.dmytro_hontar.service_api.Service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class CloudyService implements Service {
+    public CloudyService(List<User> users) {
+        this.users = users;
+    }
 
-    List<User> users = new ArrayList<>();
-    List<Subscription> subscriptions = new ArrayList<>();
+    private final List<User> users;
+    private List<Subscription> subscriptions = new ArrayList<>();
     @Override
     public void subscribe(BankCard bankCard) {
         subscriptions.add(new Subscription(bankCard.getNumber(), LocalDate.now()));
@@ -30,6 +35,6 @@ public class CloudyService implements Service {
 
     @Override
     public List<User> getAllUsers() {
-        return users;
+        return users.stream().collect(Collectors.toUnmodifiableList());
     }
 }
