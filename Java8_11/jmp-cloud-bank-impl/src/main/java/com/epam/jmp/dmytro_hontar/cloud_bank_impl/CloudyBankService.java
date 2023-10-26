@@ -9,10 +9,8 @@ import com.epam.jmp.dmytro_hontar.dto.bankcard.CreditBankCard;
 import com.epam.jmp.dmytro_hontar.dto.bankcard.DebitBankCard;
 import com.epam.jmp.dmytro_hontar.dto.enums.BankCardType;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class CloudyBankService implements Bank {
     @Override

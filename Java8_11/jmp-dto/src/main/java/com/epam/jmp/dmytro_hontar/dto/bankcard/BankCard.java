@@ -29,8 +29,16 @@ public abstract class BankCard {
         return amount;
     }
 
-    public void setAmount(BigDecimal amount) {
-        this.amount = amount;
+    public void setAmount(int inteAmount) {
+        this.amount = new BigDecimal(inteAmount);
     }
 
+    @Override
+    public String toString() {
+        return "BankCard{" +
+                "number='" + number + '\'' +
+                ", user=" + user.getName() + " " + user.getSurname() +
+                ", amount=" + amount +
+                '}';
+    }
 }
