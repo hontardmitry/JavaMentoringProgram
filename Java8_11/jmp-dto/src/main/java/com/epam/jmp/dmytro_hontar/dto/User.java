@@ -9,9 +9,9 @@ public class User {
         this.birthday = birthday;
     }
 
-    private String name;
-    private String surname;
-    private LocalDate birthday;
+    private final String name;
+    private final String surname;
+    private final LocalDate birthday;
 
     public LocalDate getBirthday() {
         return birthday;

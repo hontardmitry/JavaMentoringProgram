@@ -12,12 +12,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class CloudyService implements Service {
+
     public CloudyService(List<User> users) {
         this.users = users;
     }
 
     private final List<User> users;
-    private List<Subscription> subscriptions = new ArrayList<>();
+    private final List<Subscription> subscriptions = new ArrayList<>();
+
     @Override
     public void subscribe(BankCard bankCard) {
         subscriptions.add(new Subscription(bankCard.getNumber(), LocalDate.now()));

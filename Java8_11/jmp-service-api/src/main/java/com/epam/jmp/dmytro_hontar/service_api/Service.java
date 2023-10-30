@@ -14,7 +14,7 @@ public interface Service {
         return getAllUsers().stream()
                 .mapToLong(Service::getUserAge)
                 .average()
-                .orElseThrow(IllegalAccessError::new);
+                .orElseThrow(IllegalArgumentException::new);
     }
 
     static boolean isPayableUser(User user) {

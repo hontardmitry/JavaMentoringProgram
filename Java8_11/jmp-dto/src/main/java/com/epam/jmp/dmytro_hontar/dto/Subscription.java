@@ -22,4 +22,8 @@ public class Subscription {
                 ", startDate=" + startDate +
                 '}';
     }
+
+    public LocalDate getStartDate() {
+        return startDate;
+    }
 }
