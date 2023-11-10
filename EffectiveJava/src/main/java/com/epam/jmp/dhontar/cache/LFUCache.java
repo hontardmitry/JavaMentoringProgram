@@ -3,6 +3,8 @@ package com.epam.jmp.dhontar.cache;
 import static com.epam.jmp.dhontar.util.Constants.CACHE_MAX_SIZE;
 
 import com.epam.jmp.dhontar.statistics.StatisticListener;
+import com.epam.jmp.dhontar.util.LogUtil;
+import org.slf4j.Logger;
 
 import java.util.Comparator;
 import java.util.Map;
@@ -13,12 +15,13 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class LFUCache<K, V> {
-    private final StatisticListener<K> statListener;
+    private static final Logger LOGGER = LogUtil.getLogger();
+    private final StatisticListener statListener;
     private final Map<K, CacheEntry> cache;
 
     public LFUCache() {
         this.cache = new ConcurrentHashMap<>(CACHE_MAX_SIZE);
-        this.statListener = new StatisticListener<>();
+        this.statListener = new StatisticListener();
         ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor(runnable -> {
             Thread th = new Thread(runnable);
             th.setDaemon(true);
@@ -34,41 +37,53 @@ public class LFUCache<K, V> {
         if (cache.size() == CACHE_MAX_SIZE) {
             evict();
         }
-        cache.put(key, new CacheEntry(value));
+        synchronized (cache) {
+            cache.put(key, new CacheEntry(value));
+        }
         long endTime = System.nanoTime();
 
         statListener.onPut(startTime, endTime);
     }
 
-    public V get(K key) {
-        CacheEntry entry = cache.get(key);
-        V value = entry.getValue();
-        if (value != null) {
-            entry.incrementUsageCount();
-        }
-        return value;
+    public synchronized CacheEntry get(K key) {
+            CacheEntry entry = cache.get(key);
+            if (entry != null) {
+                entry.incrementUsageCount();
+            }
+            return entry;
+    }
+
+    public int size() {
+        return cache.size();
     }
 
     private void evict() {
-        K keyToRemove = cache.entrySet().stream()
-                .min(Comparator.comparingInt((Map.Entry<K, CacheEntry> entry) ->
-                        entry.getValue().getUsageCount().get()))
-                .orElseThrow(IllegalArgumentException::new)
-                .getKey();
-
-        cache.remove(keyToRemove);
-        statListener.onEvict(keyToRemove);
+        synchronized (cache) {
+            K keyToRemove = cache.entrySet().stream()
+                    .min(Comparator.comparingInt((Map.Entry<K, CacheEntry> entry) ->
+                            entry.getValue().getUsageCount().get()))
+                    .orElseThrow(IllegalArgumentException::new)
+                    .getKey();
+                cache.remove(keyToRemove);
+            LOGGER.info(String.format("Evicted entry with key '%s'", keyToRemove));
+        }
+        statListener.onEvict();
     }
 
-    private class CacheEntry {
-        public CacheEntry(V value) {
+    public StatisticListener getStatistics() {
+        return statListener;
+    }
+
+    //TODO close class
+    public class CacheEntry {
+        private CacheEntry(V value) {
             this.value = value;
         }
 
         private final V value;
         private final AtomicInteger usageCount = new AtomicInteger();
 
-        public void incrementUsageCount() {
+        private void incrementUsageCount() {
             this.usageCount.incrementAndGet();
         }
 

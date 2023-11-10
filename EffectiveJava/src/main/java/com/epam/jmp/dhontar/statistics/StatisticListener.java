@@ -1,28 +1,26 @@
 package com.epam.jmp.dhontar.statistics;
 
-import static com.epam.jmp.dhontar.util.LogUtil.getLogger;
-
-import org.slf4j.Logger;
-
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
-public class StatisticListener<K> implements IEvictListener<K>, IPutListener {
-    private static final Logger LOGGER = getLogger();
+public class StatisticListener implements ICacheListener {
     private final AtomicLong totalPutTime = new AtomicLong();
     private final AtomicInteger putsCount = new AtomicInteger();
     private final AtomicInteger evictionCount = new AtomicInteger();
 
     @Override
-    public void onEvict(K key) {
-        this.evictionCount.incrementAndGet();
-        LOGGER.info(String.format("Evicted: %s", key.toString()));
+    public void onEvict() {
+        evictionCount.getAndIncrement();
     }
 
     @Override
     public void onPut(long startTime, long endTime) {
-        totalPutTime.addAndGet(endTime - startTime);
-        putsCount.incrementAndGet();
+        totalPutTime.getAndAdd(endTime - startTime);
+        putsCount.getAndIncrement();
+    }
+
+    public long getPutsCount() {
+        return putsCount.get();
     }
 
     public long getAvgPutTime() {

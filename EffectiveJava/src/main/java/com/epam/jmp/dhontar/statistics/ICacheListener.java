@@ -1,5 +1,6 @@
 package com.epam.jmp.dhontar.statistics;
 
-public interface IPutListener {
+public interface ICacheListener {
+    void onEvict();
     void onPut(long startTime, long endTime);
 }
