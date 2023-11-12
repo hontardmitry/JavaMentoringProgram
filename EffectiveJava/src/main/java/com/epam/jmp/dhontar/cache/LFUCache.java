@@ -45,23 +45,20 @@ public class LFUCache<K, V> {
         statListener.onPut(startTime, endTime);
     }
 
-    public synchronized CacheEntry get(K key) {
+    public synchronized V get(K key) {
             CacheEntry entry = cache.get(key);
             if (entry != null) {
                 entry.incrementUsageCount();
+                return entry.value;
             }
-            return entry;
-    }
-
-    public int size() {
-        return cache.size();
+            return null;
     }
 
     private void evict() {
         synchronized (cache) {
             K keyToRemove = cache.entrySet().stream()
                     .min(Comparator.comparingInt((Map.Entry<K, CacheEntry> entry) ->
-                            entry.getValue().getUsageCount().get()))
+                            entry.getValue().getUsageCount()))
                     .orElseThrow(IllegalArgumentException::new)
                     .getKey();
                 cache.remove(keyToRemove);
@@ -74,8 +71,7 @@ public class LFUCache<K, V> {
         return statListener;
     }
 
-    //TODO close class
-    public class CacheEntry {
+    private class CacheEntry {
         private CacheEntry(V value) {
             this.value = value;
         }
@@ -87,12 +83,8 @@ public class LFUCache<K, V> {
             this.usageCount.incrementAndGet();
         }
 
-        public V getValue() {
-            return value;
-        }
-
-        public AtomicInteger getUsageCount() {
-            return usageCount;
+        private int getUsageCount() {
+            return usageCount.get();
         }
     }
 }
