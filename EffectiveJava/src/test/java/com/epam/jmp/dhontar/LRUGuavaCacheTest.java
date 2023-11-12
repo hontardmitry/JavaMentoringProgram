@@ -2,9 +2,9 @@ package com.epam.jmp.dhontar;
 
 import static com.epam.jmp.dhontar.util.Constants.CACHE_MAX_SIZE;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import com.epam.jmp.dhontar.cache.LRUGuavaCacheConfig;
-import com.google.common.cache.Cache;
 import com.google.common.cache.LoadingCache;
 import org.junit.Test;
 
@@ -33,21 +33,20 @@ public class LRUGuavaCacheTest {
     @Test
     public void whenCacheSizeExceeded_thenEvict() throws ExecutionException {
         LoadingCache<String, String> cache = LRUGuavaCacheConfig.getCache();
-        var cacheEntriesMap = new HashMap<String, String>();
         for (var i = 0; i < CACHE_MAX_SIZE; i++) {
-            cacheEntriesMap.put(Integer.toString(i), "Value" + i);
+            var key = Integer.toString(i);
+            cache.put(key, "Value" + i);
+            if (i != 0) {
+                for (var j = 0; j < 10; j++) {
+                    cache.get(key);
+                }
+            }
         }
-        cache.putAll(cacheEntriesMap);
-        System.out.println(cache.get("Exceeded"));
-        for (var i = 0; i < 100; i++) {
-            cacheEntriesMap.put(Integer.toString(i + CACHE_MAX_SIZE), "After" + i + CACHE_MAX_SIZE);
-        }
-
-
+        assertTrue(cache.stats().evictionCount() > 0);
     }
 
     @Test
-    public void whenScheduleTriggered_thenEvict() throws ExecutionException, InterruptedException {
+    public void whenScheduleIsTriggered_thenEvict() throws InterruptedException {
         LoadingCache<String, String> cache = LRUGuavaCacheConfig.getCache();
         var cacheEntriesMap = new HashMap<String, String>();
         for (var i = 0; i < 100; i++) {
@@ -55,8 +54,8 @@ public class LRUGuavaCacheTest {
         }
         cache.putAll(cacheEntriesMap);
 
-        Thread.sleep(10000);
+        Thread.sleep(6000);
 
-
+        assertTrue(cache.stats().evictionCount() > 0);
     }
 }

@@ -28,6 +28,7 @@ public class LRUGuavaCacheConfig {
                         LOGGER.info("Item {} : {} was removed.", n.getKey(), n.getValue());
                     }
                 })
+                .expireAfterAccess(5, TimeUnit.SECONDS)
                 .recordStats()
                 .build(new CacheLoader<>() {
                     @Override
@@ -42,7 +43,6 @@ public class LRUGuavaCacheConfig {
             return th;
         });
         scheduler.scheduleAtFixedRate(cache::cleanUp, 5, 5, TimeUnit.SECONDS);
-
         return cache;
     }
 }

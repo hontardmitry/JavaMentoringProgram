@@ -74,7 +74,7 @@ public class LFUCacheTest {
         }
     }
 
-    private void waitSeconds(int seconds){
+    private void waitSeconds(int seconds) {
         try {
             Thread.sleep(seconds * 1000L);
         } catch (InterruptedException e) {
