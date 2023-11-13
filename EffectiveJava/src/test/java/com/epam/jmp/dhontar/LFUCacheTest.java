@@ -14,7 +14,11 @@ import java.util.concurrent.Executors;
 import java.util.stream.Stream;
 
 public class LFUCacheTest {
-
+    private static final String key0 = "0";
+    private static final String key1 = "1";
+    private static final String key2 = "2";
+    private static final String value1 = "One";
+    private static final String value2 = "Two";
     private LFUCache<String, String> cache;
     private int maxCacheSize;
     private int evictionPeriod;
@@ -28,31 +32,32 @@ public class LFUCacheTest {
 
     @Test
     public void whenPut_thenGet() {
-        cache.put("1", "One");
-        cache.put("2", "Two");
+        cache.put(key1, value1);
+        cache.put(key2, value2);
 
-        assertEquals("One", cache.getValue("1"));
-        assertEquals("Two", cache.getValue("2"));
+        assertEquals(value1, cache.getValue(key1));
+        assertEquals(value2, cache.getValue(key2));
     }
 
     @Test
     public void whenCacheSizeExceeded_thenEvict() {
+        var extraKey = Integer.toString(maxCacheSize);
+        var extraValue = "Value100001";
         fillCache(0, maxCacheSize);
         for (int i = 1; i < maxCacheSize; i++) { //emulate usages except of 0 item
             cache.getValue(Integer.toString(i));
 
         }
         // Add a new item to trigger eviction
-        cache.put(Integer.toString(maxCacheSize), "Value100001");
+        cache.put(extraKey, extraValue);
 
-        assertNull(cache.getValue("0")); // should be evicted
-        assertNotNull(cache.getValue("1"));// should still be in cache
-        assertEquals("Value100001", cache.getValue(Integer.toString(maxCacheSize)));
+        assertNull(cache.getValue(key0)); // should be evicted
+        assertNotNull(cache.getValue(key1));// should still be in cache
+        assertEquals(extraValue, cache.getValue(extraKey));
 
     }
     @Test
     public void whenAddedExisting_thenNotEvict() {
-        var replacingKey = "1";
         var newValue = "Value3";
 
         fillCache(0, maxCacheSize);
@@ -61,18 +66,14 @@ public class LFUCacheTest {
 
         }
         // Add a new item to trigger eviction
-        cache.put(replacingKey, newValue);
+        cache.put(key1, newValue);
 
-        assertNotNull(cache.getValue("0")); // should be evicted
-        assertEquals(newValue, cache.getValue(replacingKey));// should still be in cache
+        assertNotNull(cache.getValue(key0)); // should be evicted
+        assertEquals(newValue, cache.getValue(key1));// should still be in cache
     }
 
     @Test
     public void testCorrectEvictionDetectionWithMultiThread() throws Exception {
-        String key1 = "1";
-        String key2 = "2";
-        String value1 = "One";
-        String value2 = "Two";
         cache.put(key1, value1);
         cache.put(key2, value2);
         var threads = 5;
