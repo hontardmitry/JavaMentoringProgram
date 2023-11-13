@@ -1,8 +1,8 @@
 package com.epam.jmp.dhontar.cache;
 
-import static com.epam.jmp.dhontar.util.Constants.CACHE_MAX_SIZE;
-
+import com.epam.jmp.dhontar.statistics.ICacheListener;
 import com.epam.jmp.dhontar.statistics.StatisticListener;
+import com.epam.jmp.dhontar.statistics.Statistics;
 import com.epam.jmp.dhontar.util.LogUtil;
 import org.slf4j.Logger;
 
@@ -12,46 +12,51 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class LFUCache<K, V> {
+
     private static final Logger LOGGER = LogUtil.getLogger();
-    private final StatisticListener statListener;
+    private final ICacheListener statListener = new StatisticListener();
     private final Map<K, CacheEntry> cache;
+    private int maxCacheSize = 100000;
+    public int evictionPeriod = 5;
 
     public LFUCache() {
-        this.cache = new ConcurrentHashMap<>(CACHE_MAX_SIZE);
-        this.statListener = new StatisticListener();
-        ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor(runnable -> {
-            Thread th = new Thread(runnable);
-            th.setDaemon(true);
-            return th;
-        });
+        this.cache = new ConcurrentHashMap<>(maxCacheSize);
+        setEvictScheduler(evictionPeriod);
+    }
 
-        // Schedule a task to remove the least frequently used item every 5 seconds
-        scheduler.scheduleAtFixedRate(this::evict, 5, 5, TimeUnit.SECONDS);
+    public LFUCache(int maxCacheSize, int evictionPeriod) {
+        this.maxCacheSize = maxCacheSize;
+        this.cache = new ConcurrentHashMap<>(maxCacheSize);
+        setEvictScheduler(evictionPeriod);
     }
 
     public void put(K key, V value) {
         long startTime = System.nanoTime();
-        if (cache.size() == CACHE_MAX_SIZE) {
-            evict();
-        }
         synchronized (cache) {
-            cache.put(key, new CacheEntry(value));
+            if (cache.get(key) == null) {
+                if (cache.size() == maxCacheSize) {
+                    evict();
+                }
+                cache.put(key, new CacheEntry(value));
+            } else {
+                cache.get(key).value = value;
+            }
         }
         long endTime = System.nanoTime();
-
         statListener.onPut(startTime, endTime);
     }
 
-    public synchronized V get(K key) {
-            CacheEntry entry = cache.get(key);
-            if (entry != null) {
-                entry.incrementUsageCount();
-                return entry.value;
+    public V getValue(K key) {
+        CacheEntry entry = cache.get(key);
+        if (entry != null) {
+            synchronized (cache.get(key)) {
+                entry.usageCount++;
             }
-            return null;
+            return entry.value;
+        }
+        return null;
     }
 
     private void evict() {
@@ -61,30 +66,45 @@ public class LFUCache<K, V> {
                             entry.getValue().getUsageCount()))
                     .orElseThrow(IllegalArgumentException::new)
                     .getKey();
-                cache.remove(keyToRemove);
+            cache.remove(keyToRemove);
             LOGGER.info(String.format("Evicted entry with key '%s'", keyToRemove));
         }
         statListener.onEvict();
     }
 
-    public StatisticListener getStatistics() {
-        return statListener;
+    private void setEvictScheduler(int evictionPeriod){
+        ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor(runnable -> {
+            Thread th = new Thread(runnable);
+            th.setDaemon(true);
+            return th;
+        });
+
+        scheduler.scheduleAtFixedRate(this::evict, evictionPeriod, evictionPeriod, TimeUnit.SECONDS);
     }
 
+    public Statistics getStatistics() {
+        return statListener.getStatistics();
+    }
+
+    public int getMaxCacheSize() {
+        return maxCacheSize;
+    }
+
+    public int getEvictionPeriod() {
+        return evictionPeriod;
+    }
+
+
     private class CacheEntry {
+
         private CacheEntry(V value) {
             this.value = value;
         }
 
-        private final V value;
-        private final AtomicInteger usageCount = new AtomicInteger();
-
-        private void incrementUsageCount() {
-            this.usageCount.incrementAndGet();
-        }
-
+        private V value;
+        private int usageCount;
         private int getUsageCount() {
-            return usageCount.get();
+            return usageCount;
         }
     }
 }

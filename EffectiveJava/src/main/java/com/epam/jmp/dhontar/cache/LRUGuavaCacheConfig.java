@@ -1,7 +1,5 @@
 package com.epam.jmp.dhontar.cache;
 
-import static com.epam.jmp.dhontar.util.Constants.CACHE_MAX_SIZE;
-
 import com.epam.jmp.dhontar.util.LogUtil;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -15,13 +13,14 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class LRUGuavaCacheConfig {
+
     private static final Logger LOGGER = LogUtil.getLogger();
 
     private LRUGuavaCacheConfig() {}
 
     public static LoadingCache<String, String> getCache(){
         LoadingCache<String, String> cache = CacheBuilder.newBuilder()
-                .maximumSize(CACHE_MAX_SIZE)
+                .maximumSize(10000)
                 .concurrencyLevel(Runtime.getRuntime().availableProcessors())
                 .removalListener((RemovalListener<String, String>) n -> {
                     if (n.wasEvicted()) {

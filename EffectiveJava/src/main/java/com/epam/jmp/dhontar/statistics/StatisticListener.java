@@ -4,6 +4,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class StatisticListener implements ICacheListener {
+
     private final AtomicLong totalPutTime = new AtomicLong();
     private final AtomicInteger putsCount = new AtomicInteger();
     private final AtomicInteger evictionCount = new AtomicInteger();
@@ -19,15 +20,8 @@ public class StatisticListener implements ICacheListener {
         putsCount.getAndIncrement();
     }
 
-    public long getPutsCount() {
-        return putsCount.get();
-    }
-
-    public long getAvgPutTime() {
-        return totalPutTime.get() / putsCount.get();
-    }
-
-    public int getEvictionCount() {
-        return evictionCount.get();
+    @Override
+    public Statistics getStatistics() {
+        return new Statistics(totalPutTime.get(), putsCount.get(), evictionCount.get());
     }
 }

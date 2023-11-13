@@ -1,6 +1,5 @@
 package com.epam.jmp.dhontar;
 
-import static com.epam.jmp.dhontar.util.Constants.CACHE_MAX_SIZE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -12,6 +11,7 @@ import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
 
 public class LRUGuavaCacheTest {
+
     @Test
     public void checkPutAll() {
         var cache = LRUGuavaCacheConfig.getCache();
@@ -33,7 +33,7 @@ public class LRUGuavaCacheTest {
     @Test
     public void whenCacheSizeExceeded_thenEvict() throws ExecutionException {
         LoadingCache<String, String> cache = LRUGuavaCacheConfig.getCache();
-        for (var i = 0; i < CACHE_MAX_SIZE; i++) {
+        for (var i = 0; i < 100000; i++) {
             var key = Integer.toString(i);
             cache.put(key, "Value" + i);
             if (i != 0) {
