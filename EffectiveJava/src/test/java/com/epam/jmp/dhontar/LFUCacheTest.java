@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import com.epam.jmp.dhontar.cache.LFUCache;
+import com.epam.jmp.dhontar.statistics.listener.StatisticListener;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -14,20 +15,18 @@ import java.util.concurrent.Executors;
 import java.util.stream.Stream;
 
 public class LFUCacheTest {
+    private static final int CACHE_SIZE = 100000;
+    private static final int EVICTION_PERIOD = 5;
     private static final String key0 = "0";
     private static final String key1 = "1";
     private static final String key2 = "2";
     private static final String value1 = "One";
     private static final String value2 = "Two";
     private LFUCache<String, String> cache;
-    private int maxCacheSize;
-    private int evictionPeriod;
 
     @Before
     public void setUp() {
-        cache = new LFUCache<>();
-        maxCacheSize = cache.getMaxCacheSize();
-        evictionPeriod = cache.getEvictionPeriod();
+        cache = new LFUCache<>(CACHE_SIZE, EVICTION_PERIOD,  new StatisticListener());
     }
 
     @Test
@@ -41,10 +40,10 @@ public class LFUCacheTest {
 
     @Test
     public void whenCacheSizeExceeded_thenEvict() {
-        var extraKey = Integer.toString(maxCacheSize);
+        var extraKey = Integer.toString(CACHE_SIZE);
         var extraValue = "Value100001";
-        fillCache(0, maxCacheSize);
-        for (int i = 1; i < maxCacheSize; i++) { //emulate usages except of 0 item
+        fillCache(0, CACHE_SIZE);
+        for (int i = 1; i < CACHE_SIZE; i++) { //emulate usages except of 0 item
             cache.getValue(Integer.toString(i));
 
         }
@@ -60,8 +59,8 @@ public class LFUCacheTest {
     public void whenReplace_thenNotEvict() {
         var newValue = "Value3";
 
-        fillCache(0, maxCacheSize);
-        for (int i = 1; i < maxCacheSize; i++) { //emulate usages except of 0 item
+        fillCache(0, CACHE_SIZE);
+        for (int i = 1; i < CACHE_SIZE; i++) { //emulate usages except of 0 item
             cache.getValue(Integer.toString(i));
 
         }
@@ -80,29 +79,24 @@ public class LFUCacheTest {
         var getsCount = 1000;
         int perThread = getsCount / threads;
 
-        performGetsSimultaniuslyFromThreads(threads, perThread, key1);
+        performGetsConcurrently(threads, perThread, key1);
         performGets(cache, key2, getsCount - 1);
         waitForScheduledEvict(); //wait for scheduled evict
 
         assertNull(cache.getValue(key2));
     }
 
-    private void performGetsSimultaniuslyFromThreads(int threads, int perThread, String key)
-            throws InterruptedException {
+    private void performGetsConcurrently(int threads, int perThread, String key){
         var executorService = Executors.newFixedThreadPool(threads);
 
         CountDownLatch readyThreadCounter = new CountDownLatch(threads);
-        CountDownLatch callingThreadBlocker = new CountDownLatch(1);
 
         var tasks = Stream
-                .generate(() -> getTask(cache, key, perThread, readyThreadCounter, callingThreadBlocker))
+                .generate(() -> getTask(cache, key, perThread, readyThreadCounter))
                 .limit(threads)
                 .collect(toList());
 
         tasks.forEach(executorService::execute);
-
-        readyThreadCounter.await();
-        callingThreadBlocker.countDown();
 
         executorService.shutdown();
     }
@@ -115,7 +109,7 @@ public class LFUCacheTest {
 
     private void waitForScheduledEvict() {
         try {
-            Thread.sleep((evictionPeriod + 1) * 1000L);
+            Thread.sleep((EVICTION_PERIOD + 1) * 1000L);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -124,12 +118,11 @@ public class LFUCacheTest {
     private Runnable getTask(LFUCache<String, String> cache,
                              String key,
                              int getsPerThread,
-                             CountDownLatch readyThreadCounter,
-                             CountDownLatch callingThreadBlocker) {
+                             CountDownLatch readyThreadCounter) {
         return () -> {
             readyThreadCounter.countDown();
             try {
-                callingThreadBlocker.await();
+                readyThreadCounter.await();
                 performGets(cache, key, getsPerThread);
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -140,6 +133,7 @@ public class LFUCacheTest {
     private void performGets(LFUCache<String, String> cache, String key, int getsPerThread) {
         for (var i = 0; i < getsPerThread; i++) {
             cache.getValue(key);
+            System.out.println(Thread.currentThread().getName());
         }
     }
 

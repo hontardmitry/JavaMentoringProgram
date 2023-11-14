@@ -74,16 +74,6 @@ public class LRUGuavaCache<K, V> implements ICustomCache<K, V> {
     }
 
     @Override
-    public int getMaxCacheSize() {
-        return maxCacheSize;
-    }
-
-    @Override
-    public int getEvictionPeriod() {
-        return evictionPeriod;
-    }
-
-    @Override
     public LRUStatistics getStatistics() {
         return new LRUStatistics(cache.stats().evictionCount());
     }

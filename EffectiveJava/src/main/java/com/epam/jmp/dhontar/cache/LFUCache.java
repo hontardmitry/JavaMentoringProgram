@@ -15,21 +15,22 @@ import java.util.concurrent.TimeUnit;
 
 public class LFUCache<K, V> implements ICustomCache<K, V> {
 
+    private static final int CACHE_SIZE = 100000;
+    private static final int EVICTION_PERIOD = 5;
     private static final Logger LOGGER = LogUtil.getLogger();
-    private final ICacheListener statListener = new StatisticListener();
+    private final ICacheListener statListener;
     private final Map<K, CacheEntry> cache;
-    private int maxCacheSize = 100000;
-    public int evictionPeriod = 5;
+    private final int maxCacheSize;
 
     public LFUCache() {
-        this.cache = new ConcurrentHashMap<>(maxCacheSize);
-        setEvictScheduler(evictionPeriod);
+        this(CACHE_SIZE, EVICTION_PERIOD, new StatisticListener());
     }
 
-    public LFUCache(int maxCacheSize, int evictionPeriod) {
+    public LFUCache(int maxCacheSize, int evictionPeriod,   ICacheListener statListener) {
         this.maxCacheSize = maxCacheSize;
         this.cache = new ConcurrentHashMap<>(maxCacheSize);
         setEvictScheduler(evictionPeriod);
+        this.statListener = statListener;
     }
 
     @Override
@@ -63,17 +64,14 @@ public class LFUCache<K, V> implements ICustomCache<K, V> {
 
     private void evict() {
         synchronized (cache) {
-            try {
-                K keyToRemove = cache.entrySet().stream()
-                        .min(Comparator.comparingInt((Map.Entry<K, CacheEntry> entry) ->
-                                entry.getValue().getUsageCount()))
-                        .orElseThrow(Exception::new)
-                        .getKey();
-                cache.remove(keyToRemove);
-                LOGGER.info(String.format("Evicted entry with key '%s'", keyToRemove));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            cache.entrySet().stream()
+                    .min(Comparator.comparingInt((Map.Entry<K, CacheEntry> entry) ->
+                            entry.getValue().getUsageCount()))
+                    .map(Map.Entry::getKey)
+                    .ifPresent(key -> {
+                        cache.remove(key);
+                        LOGGER.info(String.format("Evicted entry with key '%s'", key));
+                    });
         }
         statListener.onEvict();
     }
@@ -90,14 +88,6 @@ public class LFUCache<K, V> implements ICustomCache<K, V> {
 
     public LFUStatistics getStatistics() {
         return statListener.getStatistics();
-    }
-
-    public int getMaxCacheSize() {
-        return maxCacheSize;
-    }
-
-    public int getEvictionPeriod() {
-        return evictionPeriod;
     }
 
 

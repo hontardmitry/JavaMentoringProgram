@@ -20,8 +20,6 @@ public class LRUGuavaCacheTest {
     @Before
     public void setUp() {
         cache = new LRUGuavaCache<>();
-        maxCacheSize = cache.getMaxCacheSize();
-        evictionPeriod = cache.getEvictionPeriod();
     }
 
     @Test

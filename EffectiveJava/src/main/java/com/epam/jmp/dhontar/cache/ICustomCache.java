@@ -10,9 +10,5 @@ public interface ICustomCache<K, V> {
 
     void put(K ket, V value);
 
-    int getMaxCacheSize();
-
-    int getEvictionPeriod();
-
     BaseStatistics getStatistics();
 }
