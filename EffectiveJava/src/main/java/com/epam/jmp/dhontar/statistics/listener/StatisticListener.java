@@ -1,4 +1,6 @@
-package com.epam.jmp.dhontar.statistics;
+package com.epam.jmp.dhontar.statistics.listener;
+
+import com.epam.jmp.dhontar.statistics.LFUStatistics;
 
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
@@ -21,7 +23,7 @@ public class StatisticListener implements ICacheListener {
     }
 
     @Override
-    public Statistics getStatistics() {
-        return new Statistics(totalPutTime.get(), putsCount.get(), evictionCount.get());
+    public LFUStatistics getStatistics() {
+        return new LFUStatistics(totalPutTime.get(), putsCount.get(), evictionCount.get());
     }
 }

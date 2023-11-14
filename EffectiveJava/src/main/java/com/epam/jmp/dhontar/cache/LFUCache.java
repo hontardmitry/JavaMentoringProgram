@@ -1,8 +1,8 @@
 package com.epam.jmp.dhontar.cache;
 
-import com.epam.jmp.dhontar.statistics.ICacheListener;
-import com.epam.jmp.dhontar.statistics.StatisticListener;
-import com.epam.jmp.dhontar.statistics.Statistics;
+import com.epam.jmp.dhontar.statistics.LFUStatistics;
+import com.epam.jmp.dhontar.statistics.listener.ICacheListener;
+import com.epam.jmp.dhontar.statistics.listener.StatisticListener;
 import com.epam.jmp.dhontar.util.LogUtil;
 import org.slf4j.Logger;
 
@@ -13,7 +13,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class LFUCache<K, V> {
+public class LFUCache<K, V> implements ICustomCache<K, V> {
 
     private static final Logger LOGGER = LogUtil.getLogger();
     private final ICacheListener statListener = new StatisticListener();
@@ -32,6 +32,7 @@ public class LFUCache<K, V> {
         setEvictScheduler(evictionPeriod);
     }
 
+    @Override
     public void put(K key, V value) {
         long startTime = System.nanoTime();
         synchronized (cache) {
@@ -48,6 +49,7 @@ public class LFUCache<K, V> {
         statListener.onPut(startTime, endTime);
     }
 
+    @Override
     public V getValue(K key) {
         CacheEntry entry = cache.get(key);
         if (entry != null) {
@@ -61,18 +63,22 @@ public class LFUCache<K, V> {
 
     private void evict() {
         synchronized (cache) {
-            K keyToRemove = cache.entrySet().stream()
-                    .min(Comparator.comparingInt((Map.Entry<K, CacheEntry> entry) ->
-                            entry.getValue().getUsageCount()))
-                    .orElseThrow(IllegalArgumentException::new)
-                    .getKey();
-            cache.remove(keyToRemove);
-            LOGGER.info(String.format("Evicted entry with key '%s'", keyToRemove));
+            try {
+                K keyToRemove = cache.entrySet().stream()
+                        .min(Comparator.comparingInt((Map.Entry<K, CacheEntry> entry) ->
+                                entry.getValue().getUsageCount()))
+                        .orElseThrow(Exception::new)
+                        .getKey();
+                cache.remove(keyToRemove);
+                LOGGER.info(String.format("Evicted entry with key '%s'", keyToRemove));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
         statListener.onEvict();
     }
 
-    private void setEvictScheduler(int evictionPeriod){
+    private void setEvictScheduler(int evictionPeriod) {
         ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor(runnable -> {
             Thread th = new Thread(runnable);
             th.setDaemon(true);
@@ -82,7 +88,7 @@ public class LFUCache<K, V> {
         scheduler.scheduleAtFixedRate(this::evict, evictionPeriod, evictionPeriod, TimeUnit.SECONDS);
     }
 
-    public Statistics getStatistics() {
+    public LFUStatistics getStatistics() {
         return statListener.getStatistics();
     }
 
@@ -103,6 +109,7 @@ public class LFUCache<K, V> {
 
         private V value;
         private int usageCount;
+
         private int getUsageCount() {
             return usageCount;
         }

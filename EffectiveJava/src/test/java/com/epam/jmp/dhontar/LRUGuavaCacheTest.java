@@ -3,59 +3,64 @@ package com.epam.jmp.dhontar;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import com.epam.jmp.dhontar.cache.LRUGuavaCacheConfig;
-import com.google.common.cache.LoadingCache;
+import com.epam.jmp.dhontar.cache.LRUGuavaCache;
+import org.junit.Before;
 import org.junit.Test;
-
-import java.util.HashMap;
-import java.util.concurrent.ExecutionException;
 
 public class LRUGuavaCacheTest {
 
-    @Test
-    public void checkPutAll() {
-        var cache = LRUGuavaCacheConfig.getCache();
+    private static final String key1 = "1";
+    private static final String key2 = "2";
+    private static final String value1 = "One";
+    private static final String value2 = "Two";
+    private LRUGuavaCache<String, String> cache;
+    private int maxCacheSize;
+    private int evictionPeriod;
 
-        var cacheEntriesMap = new HashMap<String, String>();
-        cacheEntriesMap.put("1", "FIRST");
-        cacheEntriesMap.put("2", "SECOND");
-        cache.putAll(cacheEntriesMap);
-
-        assertEquals(2, cache.size());
+    @Before
+    public void setUp() {
+        cache = new LRUGuavaCache<>();
+        maxCacheSize = cache.getMaxCacheSize();
+        evictionPeriod = cache.getEvictionPeriod();
     }
 
     @Test
-    public void whenGetNotPresentInCache_thenUseLoader() throws ExecutionException {
-        LoadingCache<String, String> cache = LRUGuavaCacheConfig.getCache();
-        assertEquals(cache.get("100"), "Value100");
+    public void whenPut_thenGet() {
+        cache.put(key1, value1);
+        cache.put(key2, value2);
+
+        assertEquals(value1, cache.getValue(key1));
+        assertEquals(value2, cache.getValue(key2));
     }
 
     @Test
-    public void whenCacheSizeExceeded_thenEvict() throws ExecutionException {
-        LoadingCache<String, String> cache = LRUGuavaCacheConfig.getCache();
-        for (var i = 0; i < 100000; i++) {
+    public void whenGetNotPresentInCache_thenUseLoader() {
+        assertEquals(cache.getValue("100"), "Value100");
+    }
+
+    @Test
+    public void whenCacheSizeExceeded_thenEvict() {
+        for (var i = 0; i < maxCacheSize; i++) {
             var key = Integer.toString(i);
             cache.put(key, "Value" + i);
             if (i != 0) {
                 for (var j = 0; j < 10; j++) {
-                    cache.get(key);
+                    cache.getValue(key);
                 }
             }
         }
-        assertTrue(cache.stats().evictionCount() > 0);
+
+        assertTrue(cache.getStatistics().getEvictionCount() > 0);
     }
 
     @Test
     public void whenScheduleIsTriggered_thenEvict() throws InterruptedException {
-        LoadingCache<String, String> cache = LRUGuavaCacheConfig.getCache();
-        var cacheEntriesMap = new HashMap<String, String>();
         for (var i = 0; i < 100; i++) {
-            cacheEntriesMap.put(Integer.toString(i), "Value" + i);
+            cache.put(Integer.toString(i), "Value" + i);
         }
-        cache.putAll(cacheEntriesMap);
+        Thread.sleep((evictionPeriod + 1) * 1000L); //wait scheduled eviction
 
-        Thread.sleep(6000);
-
-        assertTrue(cache.stats().evictionCount() > 0);
+        assertTrue(cache.getStatistics().getEvictionCount() > 0);
     }
+
 }

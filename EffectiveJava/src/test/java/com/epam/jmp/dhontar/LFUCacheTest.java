@@ -57,7 +57,7 @@ public class LFUCacheTest {
 
     }
     @Test
-    public void whenAddedExisting_thenNotEvict() {
+    public void whenReplace_thenNotEvict() {
         var newValue = "Value3";
 
         fillCache(0, maxCacheSize);
