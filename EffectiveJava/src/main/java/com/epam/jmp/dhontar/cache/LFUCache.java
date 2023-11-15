@@ -12,6 +12,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class LFUCache<K, V> implements ICustomCache<K, V> {
 
@@ -22,11 +25,16 @@ public class LFUCache<K, V> implements ICustomCache<K, V> {
     private final Map<K, CacheEntry> cache;
     private final int maxCacheSize;
 
+    ReadWriteLock readWriteLock = new ReentrantReadWriteLock();
+    Lock writeLock = readWriteLock.writeLock();
+    Lock readLock = readWriteLock.readLock();
+
+
     public LFUCache() {
         this(CACHE_SIZE, EVICTION_PERIOD, new StatisticListener());
     }
 
-    public LFUCache(int maxCacheSize, int evictionPeriod,   ICacheListener statListener) {
+    public LFUCache(int maxCacheSize, int evictionPeriod, ICacheListener statListener) {
         this.maxCacheSize = maxCacheSize;
         this.cache = new ConcurrentHashMap<>(maxCacheSize);
         setEvictScheduler(evictionPeriod);
@@ -36,7 +44,8 @@ public class LFUCache<K, V> implements ICustomCache<K, V> {
     @Override
     public void put(K key, V value) {
         long startTime = System.nanoTime();
-        synchronized (cache) {
+        try {
+            writeLock.lock();
             if (cache.get(key) == null) {
                 if (cache.size() == maxCacheSize) {
                     evict();
@@ -45,6 +54,8 @@ public class LFUCache<K, V> implements ICustomCache<K, V> {
             } else {
                 cache.get(key).value = value;
             }
+        } finally {
+            writeLock.unlock();
         }
         long endTime = System.nanoTime();
         statListener.onPut(startTime, endTime);
@@ -54,8 +65,11 @@ public class LFUCache<K, V> implements ICustomCache<K, V> {
     public V getValue(K key) {
         CacheEntry entry = cache.get(key);
         if (entry != null) {
-            synchronized (cache.get(key)) {
+            try{
+                readLock.lock();
                 entry.usageCount++;
+            } finally {
+                readLock.unlock();
             }
             return entry.value;
         }

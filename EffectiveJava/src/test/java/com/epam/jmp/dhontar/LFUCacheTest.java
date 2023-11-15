@@ -72,7 +72,7 @@ public class LFUCacheTest {
     }
 
     @Test
-    public void testCorrectEvictionDetectionWithMultiThread() throws Exception {
+    public void whenConcurrentAccess_thenEvictLFU() {
         cache.put(key1, value1);
         cache.put(key2, value2);
         var threads = 5;
