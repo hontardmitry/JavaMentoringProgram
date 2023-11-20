@@ -28,14 +28,14 @@ public class FactorialFJP extends RecursiveTask<BigInteger> {
             int mid = (start + end) / 2;
             FactorialFJP leftTask = new FactorialFJP(start, mid);
             FactorialFJP rightTask = new FactorialFJP(mid + 1, end);
-            leftTask.fork();
-            // Combine results of subtasks
-            return rightTask.compute().multiply(leftTask.join());
+
+            ForkJoinTask.invokeAll(leftTask, rightTask);
+            return leftTask.join().multiply(rightTask.join());
         }
     }
 
     private static BigInteger calculateFactorial(int start, int end) {
-        var result = BigInteger.valueOf(1);
+        var result = BigInteger.ONE;
         for (var i = start; i <= end; i++) {
             result = result.multiply(BigInteger.valueOf(i));
         }
