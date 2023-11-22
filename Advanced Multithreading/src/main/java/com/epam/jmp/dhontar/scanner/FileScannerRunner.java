@@ -23,11 +23,11 @@ public class FileScannerRunner {
 
         System.out.println("\nScanning folder ");
 
-        String bgndChar = "░";
         int barSize = 40;
-        String background = bgndChar.repeat(barSize);
-        String caret = "████";
         int x = 0;
+        String bgndChar = "░";
+        String caret = "████";
+        String background = bgndChar.repeat(barSize);
         while (!task.isDone()) {
             if (x < barSize) {
                 System.out.print("\r"
