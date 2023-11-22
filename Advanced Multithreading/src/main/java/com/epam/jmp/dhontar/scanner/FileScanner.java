@@ -60,19 +60,20 @@ public class FileScanner {
         ScanTask task = new ScanTask(folder);
         pool.execute(task);
 
-        System.out.println("Scanning folder ");
+        System.out.println("\nScanning folder ");
 
+        String bgndChar = "░";
+        int barSize = 40;
+        String background = bgndChar.repeat(barSize);
+        String caret = "████";
         int x = 0;
         while (!task.isDone()) {
-            String background = "░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░";
-            String caret = "████";
-            int barSize = background.length();
             if (x < barSize) {
                 System.out.print("\r"
                         + background.substring(0, x++ % barSize)
                         + caret + background.substring(0, (barSize - x) % barSize));
                 try {
-                    Thread.sleep(50);
+                    Thread.sleep(30);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -82,6 +83,7 @@ public class FileScanner {
         }
 
         Statistics result = task.join();
+        System.out.println("\rScanning complete");
         System.out.println("\nFiles count: " + result.fileCount);
         System.out.println("Folders count: " + result.folderCount);
         System.out.println("Total size: " + result.fileSize + " bytes");
