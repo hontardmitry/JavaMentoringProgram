@@ -26,9 +26,9 @@ public class FactorialTask extends RecursiveTask<BigInteger> {
             var mid = (start + end) / 2;
             var leftTask = new FactorialTask(start, mid);
             var rightTask = new FactorialTask(mid + 1, end);
+            rightTask.fork();
 
-            ForkJoinTask.invokeAll(leftTask, rightTask);
-            return leftTask.join().multiply(rightTask.join());
+            return leftTask.compute().multiply(rightTask.join());
         }
     }
 
