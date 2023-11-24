@@ -46,12 +46,13 @@ public class QuickSortAction extends RecursiveAction {
         if (low < high) {
             if (arr.length < SORT_THRESHOLD) {
                 arr = Arrays.stream(arr).sorted().toArray();
-            }
-            int pi = partition(arr, low, high);
-            var actionLow = new QuickSortAction(arr, low, pi - 1);
-            var actionHigh = new QuickSortAction(arr, pi + 1, high);
+            } else {
+                int pi = partition(arr, low, high);
+                var actionLow = new QuickSortAction(arr, low, pi - 1);
+                var actionHigh = new QuickSortAction(arr, pi + 1, high);
 
-            invokeAll(actionLow, actionHigh);
+                invokeAll(actionLow, actionHigh);
+            }
         }
     }
 }
