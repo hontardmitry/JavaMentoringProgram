@@ -5,6 +5,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.Semaphore;
 
 public class ProducerConsumer {
+
     private static final int BUFFER_SIZE = 10;
     private static final int PRODUCER_COUNT = 3;
     private static final int CONSUMER_COUNT = 2;
