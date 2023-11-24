@@ -32,11 +32,6 @@ public class FibonacciTest {
         calcFib(50);
     }
 
-//    @Test
-//    public void fibonacciOfNull() {
-//        ForkJoinPool.commonPool().invoke(new Fibonacci(null));
-//    }
-
     private void calcFib(int n) {
         long start = System.currentTimeMillis();
         var result = ForkJoinPool.commonPool().invoke(new Fibonacci(n));
