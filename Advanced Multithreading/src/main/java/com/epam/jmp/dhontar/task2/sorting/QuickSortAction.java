@@ -1,4 +1,4 @@
-package com.epam.jmp.dhontar.sorting;
+package com.epam.jmp.dhontar.task2.sorting;
 
 import java.util.Arrays;
 import java.util.concurrent.RecursiveAction;

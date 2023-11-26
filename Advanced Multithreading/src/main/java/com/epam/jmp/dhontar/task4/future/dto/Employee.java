@@ -1,4 +1,4 @@
-package com.epam.jmp.dhontar.future.dto;
+package com.epam.jmp.dhontar.task4.future.dto;
 
 public class Employee {
     private int id;

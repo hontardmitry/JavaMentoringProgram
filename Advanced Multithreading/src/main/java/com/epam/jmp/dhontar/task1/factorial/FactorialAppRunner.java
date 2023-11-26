@@ -1,6 +1,4 @@
-package com.epam.jmp.dhontar.factorial;
-
-import static com.epam.jmp.dhontar.factorial.FactorialTask.calculateFactorial;
+package com.epam.jmp.dhontar.task1.factorial;
 
 import java.math.BigInteger;
 import java.text.DecimalFormat;
@@ -16,7 +14,7 @@ public class FactorialAppRunner {
 
         // Parallel calculation
         startTime = System.nanoTime();
-        BigInteger sequentialResult = calculateFactorial(1, N);
+        BigInteger sequentialResult = FactorialTask.calculateFactorial(1, N);
         var parallelTime = System.nanoTime() - startTime;
 
         System.out.println("Sequential Result: " + sequentialResult);

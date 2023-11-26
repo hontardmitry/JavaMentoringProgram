@@ -1,11 +1,9 @@
-package com.epam.jmp.dhontar.future.service;
+package com.epam.jmp.dhontar.task4.future.service;
 
-import com.epam.jmp.dhontar.future.dto.Salary;
-import com.epam.jmp.dhontar.future.dto.data.DataGenerator;
+import com.epam.jmp.dhontar.task4.future.dto.Salary;
+import com.epam.jmp.dhontar.task4.future.dto.data.DataGenerator;
 
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executors;
 
 public class SalaryService {
 

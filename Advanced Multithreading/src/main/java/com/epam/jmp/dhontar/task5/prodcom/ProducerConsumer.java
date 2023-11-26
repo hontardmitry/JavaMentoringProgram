@@ -1,4 +1,4 @@
-package com.epam.jmp.dhontar.prodcom;
+package com.epam.jmp.dhontar.task5.prodcom;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;

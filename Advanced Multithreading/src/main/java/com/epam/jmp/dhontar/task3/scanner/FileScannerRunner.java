@@ -1,4 +1,4 @@
-package com.epam.jmp.dhontar.scanner;
+package com.epam.jmp.dhontar.task3.scanner;
 
 import java.io.File;
 import java.util.Scanner;

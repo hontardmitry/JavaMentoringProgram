@@ -1,7 +1,6 @@
-package com.epam.jmp.dhontar.factorial;
+package com.epam.jmp.dhontar.task1.factorial;
 
 import java.math.BigInteger;
-import java.util.concurrent.ForkJoinTask;
 import java.util.concurrent.RecursiveTask;
 
 public class FactorialTask extends RecursiveTask<BigInteger> {

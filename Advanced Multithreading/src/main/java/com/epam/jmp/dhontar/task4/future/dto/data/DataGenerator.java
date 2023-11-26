@@ -1,7 +1,7 @@
-package com.epam.jmp.dhontar.future.dto.data;
+package com.epam.jmp.dhontar.task4.future.dto.data;
 
-import com.epam.jmp.dhontar.future.dto.Employee;
-import com.epam.jmp.dhontar.future.dto.Salary;
+import com.epam.jmp.dhontar.task4.future.dto.Employee;
+import com.epam.jmp.dhontar.task4.future.dto.Salary;
 
 import java.util.ArrayList;
 import java.util.List;

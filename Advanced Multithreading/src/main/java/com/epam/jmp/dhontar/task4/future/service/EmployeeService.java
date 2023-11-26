@@ -1,7 +1,7 @@
-package com.epam.jmp.dhontar.future.service;
+package com.epam.jmp.dhontar.task4.future.service;
 
-import com.epam.jmp.dhontar.future.dto.Employee;
-import com.epam.jmp.dhontar.future.dto.data.DataGenerator;
+import com.epam.jmp.dhontar.task4.future.dto.Employee;
+import com.epam.jmp.dhontar.task4.future.dto.data.DataGenerator;
 
 import java.util.List;
 
