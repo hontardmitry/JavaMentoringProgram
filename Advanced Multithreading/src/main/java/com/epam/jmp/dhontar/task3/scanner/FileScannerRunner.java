@@ -7,27 +7,27 @@ import java.util.concurrent.ForkJoinPool;
 public class FileScannerRunner {
 
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
+        var scanner = new Scanner(System.in);
         System.out.print("Enter folder path: ");
-        String folderPath = scanner.nextLine();
-        File folder = new File(folderPath);
+        var folderPath = scanner.nextLine();
+        var folder = new File(folderPath);
 
         if (!folder.exists() || !folder.isDirectory()) {
             System.out.println("Invalid folder path.");
             return;
         }
 
-        ForkJoinPool pool = new ForkJoinPool();
+        var pool = new ForkJoinPool();
         var task = new ScanTask(folder);
         pool.execute(task);
 
         System.out.println("\nScanning folder ");
 
-        int barSize = 40;
-        int x = 0;
-        String bgndChar = "░";
-        String caret = "████";
-        String background = bgndChar.repeat(barSize);
+        var barSize = 40;
+        var x = 0;
+        var bgndChar = "░";
+        var caret = "████";
+        var background = bgndChar.repeat(barSize);
         while (!task.isDone()) {
             if (x < barSize) {
                 System.out.print("\r"
@@ -43,11 +43,11 @@ public class FileScannerRunner {
             }
         }
 
-        ScanTask.Statistics result = task.join();
+        var result = task.join();
         System.out.println("\rScanning complete");
-        System.out.println("\nFiles count: " + result.fileCount);
-        System.out.println("Folders count: " + result.folderCount);
-        System.out.println("Total size: " + result.fileSize + " bytes");
+        System.out.println("\nFiles count: " + result.getFileCount());
+        System.out.println("Folders count: " + result.getFolderCount());
+        System.out.println("Total size: " + result.getFileSize() + " bytes");
 
         scanner.close();
     }

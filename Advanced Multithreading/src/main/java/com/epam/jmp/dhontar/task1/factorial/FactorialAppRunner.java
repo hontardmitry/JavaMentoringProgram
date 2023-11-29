@@ -5,6 +5,7 @@ import java.text.DecimalFormat;
 import java.util.concurrent.ForkJoinPool;
 
 public class FactorialAppRunner {
+
     public static final int N = 1000;
     public static void main(String[] args) {
         // Sequential calculation

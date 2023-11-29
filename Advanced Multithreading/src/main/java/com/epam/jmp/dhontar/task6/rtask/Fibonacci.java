@@ -4,15 +4,15 @@ import java.util.concurrent.RecursiveTask;
 
 public class Fibonacci extends RecursiveTask<Long> {
 
-    private final static long[] firstTen = {0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55};
-    final int n;
+    private final static long[] FIRST_TEN = {0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55};
+    private final int n;
 
     public Fibonacci(int n) {
         this.n = n;
     }
 
     @Override
-    protected Long compute() {
+    public Long compute() {
         if (n <= 10) {
             return getFromFirstTen(n);
         }
@@ -23,6 +23,6 @@ public class Fibonacci extends RecursiveTask<Long> {
     }
 
     private Long getFromFirstTen(int x) {
-        return firstTen[x];
+        return FIRST_TEN[x];
     }
 }

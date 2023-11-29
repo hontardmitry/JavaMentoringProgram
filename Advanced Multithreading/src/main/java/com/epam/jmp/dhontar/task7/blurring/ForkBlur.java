@@ -14,13 +14,13 @@ public class ForkBlur extends RecursiveAction {
 
 
     public ForkBlur(int[] src, int start, int length, int[] dst,
-                    int mBlurWidth1, int sThreshold1) {
+                    int mBlurWidth, int sThreshold) {
         mSource = src;
         mStart = start;
         mLength = length;
         mDestination = dst;
-        this.mBlurWidth = mBlurWidth1;
-        this.sThreshold = sThreshold1;
+        this.mBlurWidth = mBlurWidth;
+        this.sThreshold = sThreshold;
     }
 
     protected void computeDirectly() {
@@ -32,12 +32,9 @@ public class ForkBlur extends RecursiveAction {
                 int mindex = Math.min(Math.max(mi + index, 0),
                         mSource.length - 1);
                 int pixel = mSource[mindex];
-                rt += (float) ((pixel & 0x00ff0000) >> 16)
-                        / mBlurWidth;
-                gt += (float) ((pixel & 0x0000ff00) >> 8)
-                        / mBlurWidth;
-                bt += (float) ((pixel & 0x000000ff) >> 0)
-                        / mBlurWidth;
+                rt += (float) ((pixel & 0x00ff0000) >> 16) / mBlurWidth;
+                gt += (float) ((pixel & 0x0000ff00) >> 8) / mBlurWidth;
+                bt += (float) ((pixel & 0x000000ff) >> 0) / mBlurWidth;
             }
 
             // Reassemble destination pixel.
