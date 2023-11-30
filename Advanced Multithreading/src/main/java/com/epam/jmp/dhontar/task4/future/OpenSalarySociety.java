@@ -9,6 +9,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 public class OpenSalarySociety {
+
     private final EmployeeService employeeService;
     private final SalaryService salaryService;
 

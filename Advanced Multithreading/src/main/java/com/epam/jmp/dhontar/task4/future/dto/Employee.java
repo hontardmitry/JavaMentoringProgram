@@ -1,6 +1,7 @@
 package com.epam.jmp.dhontar.task4.future.dto;
 
 public class Employee {
+
     private int id;
     private String name;
     private double salary;
