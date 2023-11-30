@@ -44,9 +44,9 @@ public class FileScannerRunner {
         }
 
         var result = task.join();
-        System.out.println("\rScanning complete");
-        System.out.println("\nFiles count: " + result.getFileCount());
+        System.out.println("\rScanning complete\n");
         System.out.println("Folders count: " + result.getFolderCount());
+        System.out.println("Files count: " + result.getFileCount());
         System.out.println("Total size: " + result.getFileSize() + " bytes");
 
         scanner.close();

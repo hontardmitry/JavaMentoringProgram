@@ -1,5 +1,8 @@
 package com.epam.jmp.dhontar.task5.prodcom;
 
+import com.epam.jmp.dhontar.task5.prodcom.semaphore.SemaphoreConsumer;
+import com.epam.jmp.dhontar.task5.prodcom.semaphore.SemaphoreProducer;
+
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.Semaphore;
@@ -16,10 +19,10 @@ public class ProducerConsumer {
 
     public void start() {
         for (int i = 0; i < PRODUCER_COUNT; i++) {
-            new Thread(new Producer(producerSemaphore, consumerSemaphore, buffer)).start();
+            new Thread(new SemaphoreProducer(producerSemaphore, consumerSemaphore, buffer)).start();
         }
         for (int i = 0; i < CONSUMER_COUNT; i++) {
-            new Thread(new Consumer(producerSemaphore, consumerSemaphore, buffer)).start();
+            new Thread(new SemaphoreConsumer(producerSemaphore, consumerSemaphore, buffer)).start();
         }
     }
 

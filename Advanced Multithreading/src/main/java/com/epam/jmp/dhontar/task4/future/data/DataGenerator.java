@@ -1,4 +1,4 @@
-package com.epam.jmp.dhontar.task4.future.dto.data;
+package com.epam.jmp.dhontar.task4.future.data;
 
 import com.epam.jmp.dhontar.task4.future.dto.Employee;
 import com.epam.jmp.dhontar.task4.future.dto.Salary;

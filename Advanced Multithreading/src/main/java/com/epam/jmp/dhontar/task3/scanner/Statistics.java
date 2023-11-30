@@ -6,12 +6,6 @@ public class Statistics {
     private int fileCount;
     private int folderCount;
 
-    public Statistics(long fileSize, int fileCount, int folderCount) {
-        this.fileSize = fileSize;
-        this.fileCount = fileCount;
-        this.folderCount = folderCount;
-    }
-
     public Statistics() {
     }
 
@@ -32,14 +26,14 @@ public class Statistics {
     }
 
     public void incrementFileCount() {
-        this.fileCount ++;
+        this.fileCount++;
     }
 
     public void incrementFolderCount() {
-        this.folderCount ++;
+        this.folderCount++;
     }
 
-    public void updateStats(Statistics stats){
+    public void updateStats(Statistics stats) {
         this.fileSize += stats.fileSize;
         this.fileCount += stats.fileCount;
         this.folderCount += stats.folderCount;

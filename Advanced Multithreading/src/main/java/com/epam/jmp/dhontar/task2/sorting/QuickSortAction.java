@@ -42,7 +42,7 @@ public class QuickSortAction extends RecursiveAction {
     }
 
     @Override
-    protected void compute() {
+    public void compute() {
         if (low < high) { //recursion stopper
             if (arr.length < SORT_THRESHOLD) {
                 arr = Arrays.stream(arr).sorted().toArray();

@@ -1,15 +1,15 @@
-package com.epam.jmp.dhontar.task5.prodcom;
+package com.epam.jmp.dhontar.task5.prodcom.semaphore;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Semaphore;
 
-public class Consumer implements Runnable {
+public class SemaphoreProducer implements Runnable{
 
     private final Semaphore producerSemaphore;
     private final Semaphore consumerSemaphore;
     private final BlockingQueue<Integer> buffer;
 
-    public Consumer(Semaphore producerSemaphore, Semaphore consumerSemaphore, BlockingQueue<Integer> buffer) {
+    public SemaphoreProducer(Semaphore producerSemaphore, Semaphore consumerSemaphore, BlockingQueue<Integer> buffer) {
         this.producerSemaphore = producerSemaphore;
         this.consumerSemaphore = consumerSemaphore;
         this.buffer = buffer;
@@ -19,9 +19,11 @@ public class Consumer implements Runnable {
     public void run() {
         while (true) {
             try {
-                consumerSemaphore.acquire();
-                consume();
-                producerSemaphore.release();
+                producerSemaphore.acquire();
+                int value = produce();
+                buffer.put(value);
+                System.out.println("<<<<Produced: " + value);
+                consumerSemaphore.release();
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 return;
@@ -29,7 +31,7 @@ public class Consumer implements Runnable {
         }
     }
 
-    private void consume() throws InterruptedException {
-        System.out.println(">>>Consumed: " + buffer.take());
+    private int produce() {
+        return (int) (Math.random() * 100);
     }
 }

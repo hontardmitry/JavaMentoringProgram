@@ -18,7 +18,7 @@ public class FactorialTask extends RecursiveTask<BigInteger> {
     }
 
     @Override
-    protected BigInteger compute() {
+    public BigInteger compute() {
         if (end - start <= 10) { // Sequential threshold
             return calculateFactorial(start, end);
         } else {
