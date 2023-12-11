@@ -1,5 +1,6 @@
 package com.epam.jmp.dhontar.lynda.behavioral.command;
 
+//Client
 public class MainGUI {
     private static final Document document = new Document();
 

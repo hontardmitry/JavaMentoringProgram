@@ -1,5 +1,6 @@
 package com.epam.jmp.dhontar.lynda.behavioral.command;
 
+//Receiver
 public class Document {
 
     public void save(){

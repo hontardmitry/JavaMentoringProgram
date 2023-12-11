@@ -1,4 +1,4 @@
-package com.epam.jmp.dhontar.lynda.behavioral.chain;
+package com.epam.jmp.dhontar.lynda.behavioral.chain.of.resposibility;
 
 public class ClientCertificateAuthenticationHandler extends AuthenticationHandler {
 
