@@ -1,8 +1,8 @@
 package com.epam.jmp.dhontar.lynda.behavioral.chain;
 
 public abstract class AuthenticationHandler {
-    private AuthenticationHandler next;
 
+    private final AuthenticationHandler next;
     public AuthenticationHandler(AuthenticationHandler next) {
         this.next = next;
     }

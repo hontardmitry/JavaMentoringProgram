@@ -2,7 +2,7 @@ package com.epam.jmp.dhontar.lynda.behavioral.memento;
 
 public class DocumentViewer {
 
-    private static TextDocument textDocument = new TextDocument();
+    private static final TextDocument textDocument = new TextDocument();
 
     public static void main(String[] args) {
         textDocument.write("hello");

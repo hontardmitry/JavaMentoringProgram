@@ -7,6 +7,7 @@ public class BasicAuthenticationHandler extends AuthenticationHandler {
         super(next);
     }
 
+    @Override
     public void handleRequest(String requestType){
         if ("basic".equals(requestType)){
             System.out.println("Basic authentication is used");

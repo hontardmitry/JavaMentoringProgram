@@ -2,9 +2,9 @@ package com.epam.jmp.dhontar.lynda.behavioral.mediator;
 
 public class Mediator {
 
-    private Customer customer;
-    private Driver driver;
-    private ECommerceSite site;
+    private final Customer customer;
+    private final Driver driver;
+    private final ECommerceSite site;
 
     public Mediator() {
         customer = new Customer("123 Sunny Street");

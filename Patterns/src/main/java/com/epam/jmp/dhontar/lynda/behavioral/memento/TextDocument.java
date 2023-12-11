@@ -3,7 +3,7 @@ package com.epam.jmp.dhontar.lynda.behavioral.memento;
 public class TextDocument {
 
     private String text = "";
-    private Memento memento = new Memento(text);
+    private final Memento memento = new Memento(text);
     public void write(String text){
         this.text += text;
     }

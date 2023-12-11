@@ -2,7 +2,7 @@ package com.epam.jmp.dhontar.lynda.behavioral.mediator;
 
 public class Customer {
 
-    private String address;
+    private final String address;
 
     public Customer(String address) {
         this.address = address;

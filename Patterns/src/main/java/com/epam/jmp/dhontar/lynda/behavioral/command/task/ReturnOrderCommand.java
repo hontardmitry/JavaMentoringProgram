@@ -7,8 +7,6 @@ public class ReturnOrderCommand implements OrderCommand{
     public ReturnOrderCommand(Jacket jacket) {
         this.jacket = jacket;
     }
-
-
     @Override
     public void execute() {
         jacket.returnOrder();

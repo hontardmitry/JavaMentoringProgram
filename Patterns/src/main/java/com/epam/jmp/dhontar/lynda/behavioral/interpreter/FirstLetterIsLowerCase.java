@@ -2,7 +2,7 @@ package com.epam.jmp.dhontar.lynda.behavioral.interpreter;
 
 public class FirstLetterIsLowerCase implements Expression {
 
-    private NameNotPrimitiveType nameNotPrimitiveType =
+    private final NameNotPrimitiveType nameNotPrimitiveType =
             new NameNotPrimitiveType();
     @Override
     public String interpret(String context) {

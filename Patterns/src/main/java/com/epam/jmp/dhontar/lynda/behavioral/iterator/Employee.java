@@ -2,7 +2,7 @@ package com.epam.jmp.dhontar.lynda.behavioral.iterator;
 
 public class Employee {
 
-    private String name;
+    private final String name;
 
     public Employee(String name) {
         this.name = name;

@@ -2,7 +2,7 @@ package com.epam.jmp.dhontar.lynda.behavioral.command;
 
 public class SaveCommand implements Command {
 
-    private Document document;
+    private final Document document;
 
     public SaveCommand(Document document) {
         this.document = document;

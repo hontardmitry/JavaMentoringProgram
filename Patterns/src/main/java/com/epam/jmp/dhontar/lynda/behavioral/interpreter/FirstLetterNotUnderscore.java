@@ -2,7 +2,7 @@ package com.epam.jmp.dhontar.lynda.behavioral.interpreter;
 
 public class FirstLetterNotUnderscore implements Expression {
 
-    private FirstLetterIsLowerCase firstLetterIsLowerCase =
+    private final FirstLetterIsLowerCase firstLetterIsLowerCase =
             new FirstLetterIsLowerCase();
     @Override
     public String interpret(String context) {

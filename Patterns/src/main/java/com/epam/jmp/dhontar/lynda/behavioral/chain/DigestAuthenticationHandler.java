@@ -7,6 +7,7 @@ public class DigestAuthenticationHandler extends AuthenticationHandler {
         super(next);
     }
 
+    @Override
     public void handleRequest(String requestType){
         if ("digest".equals(requestType)){
             System.out.println("Digest authentication is used");
