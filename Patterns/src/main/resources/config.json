@@ -1,0 +1,9 @@
+{
+  "users": {
+    "adminchik": "admin",
+    "searcher": "searcher",
+    "guest": "searcher",
+    "buyer": "buyer",
+    "tester": "buyer"
+  }
+}

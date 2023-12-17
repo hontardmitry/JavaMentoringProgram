@@ -1,6 +1,9 @@
 package com.epam.jmp.dhontar.patterns.task;
 
-public class InsufficientRightsException extends Throwable {
-    public InsufficientRightsException(User user, String accessedPath) {
+import static java.lang.String.format;
+
+public class InsufficientRightsException extends Exception {
+    public InsufficientRightsException(String user, String accessedPath) {
+        super(format("User %s has no access to %s", user, accessedPath));
     }
 }
