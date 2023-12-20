@@ -12,6 +12,7 @@ public class PrintsPooler {
 
     private void init(){
         //Code for initialization
+        //by default avoid separate init()
     }
 
 //    in order to avoid init() method being called concurrently from different threads

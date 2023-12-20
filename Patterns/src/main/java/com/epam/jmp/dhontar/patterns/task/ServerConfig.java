@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Optional;
 
 
 public class ServerConfig {
@@ -30,6 +31,7 @@ public class ServerConfig {
     }
 
     public String getAccessLevel(String user) {
-        return config.getUsers().get(user);
+        return Optional.ofNullable(config.getUsers().get(user))
+                .orElseThrow(IllegalArgumentException::new);
     }
 }
