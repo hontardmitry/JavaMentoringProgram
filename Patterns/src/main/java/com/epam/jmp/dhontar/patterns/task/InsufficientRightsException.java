@@ -14,6 +14,6 @@ public class InsufficientRightsException extends Exception {
      * @param accessedPath the accessed path
      */
     public InsufficientRightsException(String user, String accessedPath) {
-        super(format("User %s has no access to %s", user, accessedPath));
+        super(format("User '%s' has no access to '%s' or page does not exist", user, accessedPath));
     }
 }

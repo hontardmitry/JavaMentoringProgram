@@ -33,10 +33,7 @@ public class PopulationSimulator {
                 animal.getLocation()[0], animal.getLocation()[1]);
         ANIMALS.add(animal);
         System.out.printf("++++++++++++++++Total animals: %d\n", ANIMALS.size());
-//        ANIMALS.forEach(animal1 ->
-//                System.out.println(animal1.getAnimalType() + ", location:" +
-//                        animal1.getLocation()[0] + ", " + animal1.getLocation()[1])
-//        );
+
     }
 
     private static void removeAnimal() {
