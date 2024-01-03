@@ -43,14 +43,12 @@ public class SessionManagerTest {
     @Test(expectedExceptions = InsufficientRightsException.class)
     public void whenUserHasAdminRole_thenSessionIsNotCreatedInvalidPage() throws InsufficientRightsException {
         var sessionManager = new SessionManager();
-        var session = sessionManager.createSession(ADMIN_USER, "");
-        assertNotNull(session);
+        sessionManager.createSession(ADMIN_USER, "");
     }
     @Test(expectedExceptions = IllegalArgumentException.class)
     public void whenUserISNotValid_thenSessionIsNotCreatedValidPage() throws IllegalArgumentException, InsufficientRightsException {
         var sessionManager = new SessionManager();
-        var session = sessionManager.createSession("", GUEST_PAGE);
-        assertNotNull(session);
+        sessionManager.createSession("", GUEST_PAGE);
     }
 }
 
